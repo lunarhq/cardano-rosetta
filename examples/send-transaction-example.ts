@@ -5,7 +5,6 @@
 import delay from 'delay';
 import * as NaCl from 'tweetnacl';
 import axios from 'axios';
-import { TransactionHash } from '@emurgo/cardano-serialization-lib-nodejs';
 
 const logger = console;
 
