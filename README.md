@@ -35,6 +35,7 @@ docker run -p 8080:8080 -v cardano-rosetta:/data --name cardano-rosetta cardano-
 | ---                                                                                                | ---                                                          |
 | [Construction API Documentation]                                                                   | Users of the Cardano Rosetta Construction API                |
 | [Data API Documentation]                                                                           | Users of the Cardano Rosetta Data API                        |
+| [Cardano Rosetta Docs]                                                                                        | Cardano Rosetta specific documentation |
 | [Developer]                                                                                        | Core or external developers of cardano-rosetta-server        |
 | [Maintainer]                                                                                       | Solution maintainer                                          |
 | [QA]                                                                                               | Quality Assurance Engineers                                  |
@@ -44,6 +45,7 @@ docker run -p 8080:8080 -v cardano-rosetta:/data --name cardano-rosetta cardano-
 [built anywhere]: https://www.rosetta-api.org/docs/node_deployment.html#build-anywhere
 [Construction API Documentation]: https://www.rosetta-api.org/docs/construction_api_introduction.html
 [Data API Documentation]: https://www.rosetta-api.org/docs/data_api_introduction.html
+[Cardano Rosetta Docs]: ./docs
 [Developer]: cardano-rosetta-server/README.md
 [Maintainer]: docs/MAINTAINER.md
 [QA]: docs/QA.md
