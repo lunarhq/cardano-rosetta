@@ -1,8 +1,7 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import cbor from 'cbor';
-import { Schema } from 'inspector';
-import { operationType, SIGNATURE_TYPE } from '../../src/server/utils/constants';
+import { operationType, SIGNATURE_TYPE, stakingOperations } from '../../src/server/utils/constants';
 
 /* eslint-disable camelcase */
 const slotLeader2b1 = 'ByronGenesis-52df0f2c5539b2b1';
@@ -796,7 +795,7 @@ export const CONSTRUCTION_PAYLOADS_WITH_STAKE_KEY_REGISTRATION: Components.Schem
   }
 };
 
-export const CONSTRUCTION_PAYLOADS_WITH_STAKE_KEY_DEREGISTRATION = {
+export const CONSTRUCTION_PAYLOADS_WITH_STAKE_KEY_DEREGISTRATION: Components.Schemas.ConstructionPayloadsRequest = {
   network_identifier: {
     blockchain: 'cardano',
     network: 'mainnet'
@@ -890,7 +889,7 @@ export const CONSTRUCTION_PAYLOADS_WITH_STAKE_KEY_DEREGISTRATION = {
   }
 };
 
-export const CONSTRUCTION_PAYLOADS_WITH_STAKE_DELEGATION = {
+export const CONSTRUCTION_PAYLOADS_WITH_STAKE_DELEGATION: Components.Schemas.ConstructionPayloadsRequest = {
   network_identifier: {
     blockchain: 'cardano',
     network: 'mainnet'
@@ -985,7 +984,7 @@ export const CONSTRUCTION_PAYLOADS_WITH_STAKE_DELEGATION = {
   }
 };
 
-export const CONSTRUCTION_PAYLOADS_WITH_STAKE_KEY_REGISTRATION_AND_STAKE_DELEGATION = {
+export const CONSTRUCTION_PAYLOADS_WITH_STAKE_KEY_REGISTRATION_AND_STAKE_DELEGATION: Components.Schemas.ConstructionPayloadsRequest = {
   network_identifier: {
     blockchain: 'cardano',
     network: 'mainnet'
@@ -1093,7 +1092,7 @@ export const CONSTRUCTION_PAYLOADS_WITH_STAKE_KEY_REGISTRATION_AND_STAKE_DELEGAT
   }
 };
 
-export const CONSTRUCTION_PAYLOADS_WITH_WITHDRAWAL = {
+export const CONSTRUCTION_PAYLOADS_WITH_WITHDRAWAL: Components.Schemas.ConstructionPayloadsRequest = {
   network_identifier: {
     blockchain: 'cardano',
     network: 'mainnet'
@@ -1194,7 +1193,7 @@ export const CONSTRUCTION_PAYLOADS_WITH_WITHDRAWAL = {
   }
 };
 
-export const CONSTRUCTION_PAYLOADS_WITH_TWO_WITHDRAWALS = {
+export const CONSTRUCTION_PAYLOADS_WITH_TWO_WITHDRAWALS: Components.Schemas.ConstructionPayloadsRequest = {
   network_identifier: {
     blockchain: 'cardano',
     network: 'mainnet'
@@ -1315,7 +1314,7 @@ export const CONSTRUCTION_PAYLOADS_WITH_TWO_WITHDRAWALS = {
   }
 };
 
-export const CONSTRUCTION_PAYLOADS_WITH_STAKE_KEY_REGISTRATION_AND_WITHDRAWAL = {
+export const CONSTRUCTION_PAYLOADS_WITH_STAKE_KEY_REGISTRATION_AND_WITHDRAWAL: Components.Schemas.ConstructionPayloadsRequest = {
   network_identifier: {
     blockchain: 'cardano',
     network: 'mainnet'
@@ -1429,7 +1428,7 @@ export const CONSTRUCTION_PAYLOADS_WITH_STAKE_KEY_REGISTRATION_AND_WITHDRAWAL = 
   }
 };
 
-export const CONSTRUCTION_PAYLOADS_INVALID_OPERATION_TYPE = {
+export const CONSTRUCTION_PAYLOADS_INVALID_OPERATION_TYPE: Components.Schemas.ConstructionPayloadsRequest = {
   network_identifier: {
     blockchain: 'cardano',
     network: 'mainnet'
@@ -1455,7 +1454,7 @@ export const CONSTRUCTION_PAYLOADS_INVALID_OPERATION_TYPE = {
   }
 };
 
-export const CONSTRUCTION_PAYLOADS_MULTIPLE_INPUTS = {
+export const CONSTRUCTION_PAYLOADS_MULTIPLE_INPUTS: Components.Schemas.ConstructionPayloadsRequest = {
   network_identifier: {
     blockchain: 'cardano',
     network: 'mainnet'
@@ -1568,7 +1567,9 @@ export const CONSTRUCTION_PAYLOADS_MULTIPLE_INPUTS = {
 };
 
 const constructionExtraData = (constructionPayloadsRequest: Components.Schemas.ConstructionPayloadsRequest) =>
-  constructionPayloadsRequest.operations.filter(op => op.coin_change?.coin_action === 'coin_spent');
+  constructionPayloadsRequest.operations.filter(
+    op => op.coin_change?.coin_action === 'coin_spent' || stakingOperations.includes(op.type as operationType)
+  );
 
 export const CONSTRUCTION_PAYLOADS_RESPONSE = cbor
   .encode([
@@ -1580,41 +1581,35 @@ export const CONSTRUCTION_PAYLOADS_RESPONSE = cbor
 export const CONSTRUCTION_PAYLOADS_STAKE_REGISTRATION_RESPONSE = cbor
   .encode([
     'a500818258202f23fd8cca835af21f3ac375bac601f97ead75f2e79143bdf71fe2c4be043e8f01018282581d61bb40f1a647bc88c1bd6b738db8eb66357d926474ea5ffd6baa76c9fb19271082581d61bb40f1a647bc88c1bd6b738db8eb66357d926474ea5ffd6baa76c9fb199c4002199c40031903e8048182008200581cbb40f1a647bc88c1bd6b738db8eb66357d926474ea5ffd6baa76c9fb',
-    CONSTRUCTION_PAYLOADS_WITH_STAKE_KEY_REGISTRATION.operations.filter(
-      op => op.coin_change?.coin_action === 'coin_spent'
-    )
+    constructionExtraData(CONSTRUCTION_PAYLOADS_WITH_STAKE_KEY_REGISTRATION)
   ])
   .toString('hex');
 
 export const CONSTRUCTION_PAYLOADS_STAKE_DEREGISTRATION_RESPONSE = cbor
   .encode([
     'a500818258202f23fd8cca835af21f3ac375bac601f97ead75f2e79143bdf71fe2c4be043e8f01018282581d61bb40f1a647bc88c1bd6b738db8eb66357d926474ea5ffd6baa76c9fb19271082581d61bb40f1a647bc88c1bd6b738db8eb66357d926474ea5ffd6baa76c9fb199c4002199c40031903e8048182018200581cbb40f1a647bc88c1bd6b738db8eb66357d926474ea5ffd6baa76c9fb',
-    CONSTRUCTION_PAYLOADS_WITH_STAKE_KEY_DEREGISTRATION.operations.filter(
-      op => op.coin_change?.coin_action === 'coin_spent'
-    )
+    constructionExtraData(CONSTRUCTION_PAYLOADS_WITH_STAKE_KEY_DEREGISTRATION)
   ])
   .toString('hex');
 
 export const CONSTRUCTION_PAYLOADS_STAKE_DELEGATION_RESPONSE = cbor
   .encode([
     'a500818258202f23fd8cca835af21f3ac375bac601f97ead75f2e79143bdf71fe2c4be043e8f01018282581d61bb40f1a647bc88c1bd6b738db8eb66357d926474ea5ffd6baa76c9fb19271082581d61bb40f1a647bc88c1bd6b738db8eb66357d926474ea5ffd6baa76c9fb199c4002199c40031903e8048183028200581cbb40f1a647bc88c1bd6b738db8eb66357d926474ea5ffd6baa76c9fb581c1b268f4cba3faa7e36d8a0cc4adca2096fb856119412ee7330f692b5',
-    CONSTRUCTION_PAYLOADS_WITH_STAKE_DELEGATION.operations.filter(op => op.coin_change?.coin_action === 'coin_spent')
+    constructionExtraData(CONSTRUCTION_PAYLOADS_WITH_STAKE_DELEGATION)
   ])
   .toString('hex');
 
 export const CONSTRUCTION_PAYLOADS_WITHDRAWAL_RESPONSE = cbor
   .encode([
     'a500818258202f23fd8cca835af21f3ac375bac601f97ead75f2e79143bdf71fe2c4be043e8f01018282581d61bb40f1a647bc88c1bd6b738db8eb66357d926474ea5ffd6baa76c9fb19271082581d61bb40f1a647bc88c1bd6b738db8eb66357d926474ea5ffd6baa76c9fb199c4002199c40031903e805a1581de1bb40f1a647bc88c1bd6b738db8eb66357d926474ea5ffd6baa76c9fb192710',
-    CONSTRUCTION_PAYLOADS_WITH_WITHDRAWAL.operations.filter(op => op.coin_change?.coin_action === 'coin_spent')
+    constructionExtraData(CONSTRUCTION_PAYLOADS_WITH_WITHDRAWAL)
   ])
   .toString('hex');
 
 export const CONSTRUCTION_PAYLOADS_STAKE_REGISTRATION_AND_WITHDRAWAL_RESPONSE = cbor
   .encode([
     'a600818258202f23fd8cca835af21f3ac375bac601f97ead75f2e79143bdf71fe2c4be043e8f01018282581d61bb40f1a647bc88c1bd6b738db8eb66357d926474ea5ffd6baa76c9fb19271082581d61bb40f1a647bc88c1bd6b738db8eb66357d926474ea5ffd6baa76c9fb199c4002199c40031903e8048182008200581cbb40f1a647bc88c1bd6b738db8eb66357d926474ea5ffd6baa76c9fb05a1581de1bb40f1a647bc88c1bd6b738db8eb66357d926474ea5ffd6baa76c9fb192710',
-    CONSTRUCTION_PAYLOADS_WITH_STAKE_KEY_REGISTRATION_AND_WITHDRAWAL.operations.filter(
-      op => op.coin_change?.coin_action === 'coin_spent'
-    )
+    constructionExtraData(CONSTRUCTION_PAYLOADS_WITH_STAKE_KEY_REGISTRATION_AND_WITHDRAWAL)
   ])
   .toString('hex');
 
@@ -1981,14 +1976,6 @@ export const CONSTRUCTION_UNSIGNED_TRANSACTION_WITH_EXTRA_DATA = cbor
   .encode([
     'a400818258202f23fd8cca835af21f3ac375bac601f97ead75f2e79143bdf71fe2c4be043e8f01018282581d61bb40f1a647bc88c1bd6b738db8eb66357d926474ea5ffd6baa76c9fb19271082581d61bb40f1a647bc88c1bd6b738db8eb66357d926474ea5ffd6baa76c9fb199c4002199c40031903e8',
     constructionExtraData(CONSTRUCTION_PAYLOADS_REQUEST)
-  ])
-  .toString('hex');
-
-export const CONSTRUCTION_UNSIGNED_TRANSACTION_WITH_STAKE_KEY_REGISTRATION_WITH_EXTRA_DATA = cbor
-  .encode([
-    // 'a500818258202f23fd8cca835af21f3ac375bac601f97ead75f2e79143bdf71fe2c4be043e8f01018282581d61bb40f1a647bc88c1bd6b738db8eb66357d926474ea5ffd6baa76c9fb19271082581d61bb40f1a647bc88c1bd6b738db8eb66357d926474ea5ffd6baa76c9fb199c4002199c40031903e8048182001B400D60AAF34EAF6DCBAB9BBA46001A23497886CF11066F7846933D30E5AD3F',
-    'a500818258202f23fd8cca835af21f3ac375bac601f97ead75f2e79143bdf71fe2c4be043e8f01018282581d61bb40f1a647bc88c1bd6b738db8eb66357d926474ea5ffd6baa76c9fb19271082581d61bb40f1a647bc88c1bd6b738db8eb66357d926474ea5ffd6baa76c9fb199c4002199c40031903e8048182008200581cbb40f1a647bc88c1bd6b738db8eb66357d926474ea5ffd6baa76c9fb',
-    constructionExtraData(CONSTRUCTION_PAYLOADS_WITH_STAKE_KEY_REGISTRATION)
   ])
   .toString('hex');
 
